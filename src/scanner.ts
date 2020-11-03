@@ -1,5 +1,6 @@
 import { createReadStream, ReadStream } from 'fs';
 import { createInterface, Interface } from 'readline'
+import { RetextParser } from './retext-parser'
 
 export interface InclusiveDiagnostic {
     lineNumber: number;
@@ -9,30 +10,24 @@ export interface InclusiveDiagnostic {
     suggestedTerms: string;
 }
 
-const mockedTerms: { [id: string]: string; } = {
-    "slave": "primary, primaries, hub, hubs, reference, references, replica, replicas, spoke, spokes, secondary, secondaries",
-    "sophisticated culture" : "complex culture"
-};
-
 // Complexity: O(N*M*P)
 // where: N = number of lines in a file;
 //        M = number of non-inclusive terms to be scanned
 //        P = number of words in a line
 export async function scanNonInclusiveTerms(filePath: string): Promise<InclusiveDiagnostic[]> {
-    var fileReadStream : ReadStream = createReadStream(filePath);
-
-    var reader: Interface = createInterface({
-        input: fileReadStream,
-        crlfDelay: Infinity
-    })
-
     var diagnostics: InclusiveDiagnostic[] = [];
+    var retextTerms: { [id: string]: string; } = await RetextParser.getTerms();
     var lineIndex: number = 0;
 
+    var reader: Interface = createInterface({
+        input: createReadStream(filePath),
+        crlfDelay: Infinity
+    })
+    
     for await (const line of reader) {
         lineIndex++;
         
-        for (let originalTerm in mockedTerms) {
+        for (let originalTerm in retextTerms) {
             if (!line.includes(originalTerm))
                 continue;
             
@@ -43,7 +38,7 @@ export async function scanNonInclusiveTerms(filePath: string): Promise<Inclusive
                 term: originalTerm,
                 termStartIndex: originalTermIndex,
                 termEndIndex: originalTermIndex + originalTerm.length - 1,
-                suggestedTerms: mockedTerms[originalTerm]
+                suggestedTerms: retextTerms[originalTerm]
             };
 
             diagnostics.push(diagnostic);

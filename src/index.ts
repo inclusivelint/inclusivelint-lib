@@ -1,8 +1,7 @@
 import { InclusiveDiagnostic, scanNonInclusiveTerms } from './scanner'
-import { RetextParser } from './retext-parser'
 
 const runDiagnostics = async () => {
-    var diagnostics: InclusiveDiagnostic[] = await scanNonInclusiveTerms("<file name>")
+    var diagnostics: InclusiveDiagnostic[] = await scanNonInclusiveTerms("<file path>")
     console.log(JSON.stringify(diagnostics));
 };
 
