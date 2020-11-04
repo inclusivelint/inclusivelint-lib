@@ -71,7 +71,13 @@ export class RetextParser {
 
       (async function () {
         // downloads the file
-        let fileContent: string = await RetextParser.downloadFile(config.DictionaryUrl);
+        let fileContent: string;
+        try {
+          fileContent = await RetextParser.downloadFile(config.DictionaryUrl); 
+        } catch(e) {
+          reject('Error fetching terms file: ' + e)
+          return;
+        }
 
         // parses lines and initializes dictionary
         var lines = fileContent.split('\n');

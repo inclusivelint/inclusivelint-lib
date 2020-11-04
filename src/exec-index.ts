@@ -1,9 +1,7 @@
-#!/usr/bin/env node
-
 import { InclusiveDiagnostic, scanFile } from './scanner'
 
 const runDiagnostics = async () => {
-    var diagnostics: InclusiveDiagnostic[] = await scanFile("<file>")
+    var diagnostics: InclusiveDiagnostic[] = await scanFile("<file path>")
     console.log(JSON.stringify(diagnostics));
 };
 

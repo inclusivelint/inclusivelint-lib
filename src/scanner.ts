@@ -36,6 +36,7 @@ export async function scanFile(filePath: string): Promise<InclusiveDiagnostic[]>
  */
 export async function scan(fileContent: string): Promise<InclusiveDiagnostic[]> {
     var diagnostics: InclusiveDiagnostic[] = [];
+    const lineBreak:string = '\n'
 
     // reads the terms
     var terms: { [id: string]: string; } = await RetextParser.getTerms();
@@ -65,9 +66,9 @@ export async function scan(fileContent: string): Promise<InclusiveDiagnostic[]> 
 
                 // calculates line indexes
                 // gets the absolute last line break character in the file just before the term
-                let lastLineBreakIndex: number = fileContent.substring(0, termIndex).lastIndexOf('\n');
+                let lastLineBreakIndex: number = fileContent.substring(0, termIndex).lastIndexOf(lineBreak);
                 // gets the next line break after the term - now we know where the line starts and ends
-                let nextLineBreakIndex: number = fileContent.substring(termIndex).indexOf('\n') + termIndex;
+                let nextLineBreakIndex: number = fileContent.substring(termIndex).indexOf(lineBreak) + termIndex;
                 // tabs are equivalent to 4 characters by default, so we must count them
                 let tabsInLine: number = (fileContent.substring(lastLineBreakIndex, nextLineBreakIndex).match(/\t/g) || []).length;
                 /**
