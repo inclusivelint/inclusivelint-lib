@@ -1,10 +1,10 @@
 {
   "name": "inclusivelint-lib",
-  "version": "1.0.24",
+  "version": "1.0.32",
   "description": "Core library for inclusivelint",
   "main": "./lib/index.js",
   "bin": {
-    "inclusivelint-cli": "./lib/index.js"
+    "inclusivelint": "dist/exec-index.js"
   },
   "types": "dist/index.d.ts",
   "scripts": {
