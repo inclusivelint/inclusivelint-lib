@@ -2,12 +2,17 @@
   "name": "inclusivelint-lib",
   "version": "1.0.24",
   "description": "Core library for inclusivelint",
-  "main": "dist/index.js",
+  "main": "./lib/index.js",
+  "bin": {
+    "inclusivelint-cli": "./lib/index.js"
+  },
   "types": "dist/index.d.ts",
   "scripts": {
-    "start": "ts-node ./src/index.ts",
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "create": "npm run build && npm run test",
+    "build": "tsc -p .",
+    "local": "sudo npm i -g && inclusivelint-cli",
+    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
   },
   "repository": {
     "type": "git",
@@ -20,14 +25,25 @@
   },
   "homepage": "https://github.com/inclusivelint/inclusivelint-lib#readme",
   "devDependencies": {
+    "@types/clear": "^0.1.0",
+    "@types/commander": "^2.12.2",
+    "@types/figlet": "^1.2.1",
     "@types/node": "^14.14.6",
+    "@types/yargs": "^15.0.9",
+    "nodemon": "^2.0.6",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.5"
   },
   "dependencies": {
+    "chalk": "^4.1.0",
+    "clear": "^0.1.0",
+    "commander": "^6.2.0",
+    "figlet": "^1.5.0",
     "fs": "0.0.1-security",
     "http": "^0.0.1-security",
     "nodejs": "^0.0.0",
+    "ora": "^5.1.0",
+    "path": "^0.12.7",
     "typed-rest-client": "^1.7.3"
   }
 }

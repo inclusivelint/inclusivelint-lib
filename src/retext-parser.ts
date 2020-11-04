@@ -19,24 +19,18 @@ export class RetextParser {
         url,
         function (response) {
 
-          // handling errors
           const { statusCode } = response;
           if (statusCode >= 300) {
-            reject(
-              new Error(response.statusMessage)
-            )
+            console.error('Unable to download file, check your connectivity. File Url: ' + url + '. Error details: ' + response.statusMessage)
+            reject(new Error(response.statusMessage))
           }
 
           // building the return string by combining the chunks
           const chunks = [];
-          response.on('data', (chunk) => {
-            chunks.push(chunk);
-          });
+          response.on('data', (chunk) => chunks.push(chunk));
 
           // returning the promise when the call finishes
-          response.on('end', () => {
-            resolve(Buffer.concat(chunks).toString());
-          });
+          response.on('end', () => resolve(Buffer.concat(chunks).toString()));
 
         }
       ).end();
@@ -54,7 +48,7 @@ export class RetextParser {
   private static sanitizeValue(value: string, removeParenthesis: boolean): string {
     let result: string = value.replace(/[`]/g, "");
     if (removeParenthesis) {
-      result = result.replace(/[()]/g, '');
+      result = result.replace(/\([^\)]+\)/g, '');
     }
 
     return result.trim();
@@ -114,6 +108,3 @@ export class RetextParser {
 
   }
 }
-
-
-
