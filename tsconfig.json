@@ -1,17 +1,3 @@
-// {
-//     "compilerOptions": {
-//         "target": "es2018",
-//         "module": "commonjs",
-//         "lib": ["es6", "es2018", "dom"],
-//         "declaration": true,
-//         "outDir": "dist",
-//         "rootDir": "src",
-//         "types": ["node"],
-//         "esModuleInterop": true,
-//         "resolveJsonModule": true
-//     }
-// }
-
 {
   "compilerOptions": {
     "module": "commonjs",
