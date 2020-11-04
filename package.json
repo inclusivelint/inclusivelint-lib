@@ -1,11 +1,14 @@
 {
   "name": "inclusivelint-lib",
-  "version": "1.0.24",
+  "version": "1.0.32",
   "description": "Core library for inclusivelint",
-  "main": "dist/index.js",
+  "main": "dist/pkg-index.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "inclusivelint": "dist/exec-index.js"
+  },
   "scripts": {
-    "start": "ts-node ./src/index.ts",
+    "start": "ts-node ./src/exec-index.ts",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
