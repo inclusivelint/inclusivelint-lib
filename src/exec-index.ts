@@ -3,7 +3,7 @@
 import { InclusiveDiagnostic, scanFile } from './scanner'
 
 const runDiagnostics = async () => {
-    var diagnostics: InclusiveDiagnostic[] = await scanFile("/media/edguer/Data/edguer/Documents/Projects/inclusivelint/test/pom.xml")
+    var diagnostics: InclusiveDiagnostic[] = await scanFile("<file>")
     console.log(JSON.stringify(diagnostics));
 };
 
