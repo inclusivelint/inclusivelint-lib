@@ -36,14 +36,15 @@ export async function scanFile(filePath: string): Promise<InclusiveDiagnostic[]>
  */
 export async function scan(fileContent: string): Promise<InclusiveDiagnostic[]> {
     var diagnostics: InclusiveDiagnostic[] = [];
+    const lineBreak:string = '\n'
 
     // reads the terms
     var terms: { [id: string]: string; } = await RetextParser.getTerms();
 
     // iterate terms: less costly than iterating lines or words
-    for (let key in terms) {
+    for (let term in terms) {
         // build regex expression and initializes indexes
-        const regex = new RegExp('\\b(' + key + ')\\b', "gi")
+        const regex = new RegExp('\\b(' + term + ')\\b', "gi")
 
         // quickly search for the term and dismisses it if no occurrence is found
         if (!regex.test(fileContent)) {
@@ -65,9 +66,9 @@ export async function scan(fileContent: string): Promise<InclusiveDiagnostic[]> 
 
                 // calculates line indexes
                 // gets the absolute last line break character in the file just before the term
-                let lastLineBreakIndex: number = fileContent.substring(0, termIndex).lastIndexOf('\n');
+                let lastLineBreakIndex: number = fileContent.substring(0, termIndex).lastIndexOf(lineBreak);
                 // gets the next line break after the term - now we know where the line starts and ends
-                let nextLineBreakIndex: number = fileContent.substring(termIndex).indexOf('\n') + termIndex;
+                let nextLineBreakIndex: number = fileContent.substring(termIndex).indexOf(lineBreak) + termIndex;
                 // tabs are equivalent to 4 characters by default, so we must count them
                 let tabsInLine: number = (fileContent.substring(lastLineBreakIndex, nextLineBreakIndex).match(/\t/g) || []).length;
                 /**
@@ -81,12 +82,12 @@ export async function scan(fileContent: string): Promise<InclusiveDiagnostic[]> 
                 // create and send the diagnostic object
                 diagnostics.push({
                     lineNumber: (fileContent.substring(0, termIndex).match(/\n|\n\r|\r/g) || []).length + 1,
-                    term: key,
+                    term: term,
                     termStartIndex: termIndex,
-                    termEndIndex: termIndex + key.length - 1,
+                    termEndIndex: termIndex + term.length - 1,
                     termLineStartIndex: termLineStartIndex,
-                    termLineEndIndex: termLineStartIndex + key.length,
-                    suggestedTerms: terms[key]
+                    termLineEndIndex: termLineStartIndex + term.length,
+                    suggestedTerms: terms[term]
                 });
             }
         } while (offsetIndex > -1);

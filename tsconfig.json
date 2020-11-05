@@ -1,12 +1,16 @@
 {
-    "compilerOptions": {
-      "module": "commonjs",
-      "target": "es2018",
-      "declaration": true,
-      "resolveJsonModule": true,
-      "outDir": "./dist"
-    },
-    "include": [
-      "src/**/*"
-    ]
-  }
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2018",
+    "lib": ["es6", "es2018", "dom"],
+    "declaration": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "types": ["node"],
+    "strict": true,
+    "outDir": "./dist"
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

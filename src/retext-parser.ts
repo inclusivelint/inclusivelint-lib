@@ -2,7 +2,8 @@ import * as https from "https"
 import * as config from './config.json';
 
 export class RetextParser {
-  private static dictionary: { [id: string]: string; } = null;
+  private static dictionary: { [id: string]: string; } = {};
+  private static isDictionaryFilled = false;
 
   /**
    * Downloads a file a returns its string content through a Promise
@@ -19,14 +20,13 @@ export class RetextParser {
         url,
         function (response) {
 
-          const { statusCode } = response;
-          if (statusCode >= 300) {
+          if (response.statusCode == undefined || response.statusCode >= 300) {
             console.error('Unable to download file, check your connectivity. File Url: ' + url + '. Error details: ' + response.statusMessage)
             reject(new Error(response.statusMessage))
           }
 
           // building the return string by combining the chunks
-          const chunks = [];
+          const chunks:any = [];
           response.on('data', (chunk) => chunks.push(chunk));
 
           // returning the promise when the call finishes
@@ -64,14 +64,20 @@ export class RetextParser {
     return await new Promise((resolve, reject) => {
 
       // if dictionary was already baked, just return it
-      if (this.dictionary != null) {
+      if (RetextParser.isDictionaryFilled) {
         resolve(this.dictionary);
         return;
       }
 
       (async function () {
         // downloads the file
-        let fileContent: string = await RetextParser.downloadFile(config.DictionaryUrl);
+        let fileContent: string;
+        try {
+          fileContent = await RetextParser.downloadFile(config.DictionaryUrl); 
+        } catch(e) {
+          reject('Error fetching terms file: ' + e)
+          return;
+        }
 
         // parses lines and initializes dictionary
         var lines = fileContent.split('\n');
@@ -100,6 +106,7 @@ export class RetextParser {
 
         // deliver the promise
         RetextParser.dictionary = dictionary;
+        RetextParser.isDictionaryFilled = true;
         resolve(dictionary);
 
       })();
@@ -108,6 +115,3 @@ export class RetextParser {
 
   }
 }
-
-
-
