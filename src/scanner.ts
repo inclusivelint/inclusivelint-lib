@@ -1,14 +1,55 @@
 import { readFileSync } from 'fs';
 import { RetextParser } from './retext-parser'
 
+/**
+ * Interface representing inclusive diagnostic data.
+ */
 export interface InclusiveDiagnostic {
+    /**
+     * Line number in which the diagnostic is pointing to.
+     */
     lineNumber: number;
+    /**
+     * Term found by the linter.
+     */
     term: string;
+    /**
+     * Occurrence start index related to the whole file - line breaks are considered as common characters.
+     */
     termStartIndex: number;
+    /**
+     * Occurrence end index related to the whole file - line breaks are considered as common characters.
+     */
     termEndIndex: number;
+    /**
+     * Occurrence start index of the corresponding line.
+     */
     termLineStartIndex: number;
+    /**
+     * Occurrence end index of the corresponding line.
+     */
     termLineEndIndex: number;
+    /**
+     * Suggested terms to be used.
+     */
     suggestedTerms: string;
+}
+
+/**
+ * File representation class. We are avoiding passing variables through functions to avoid unnecessary memory copies.
+ */
+export class FileInfo {
+    public fileUri: string;
+    public fileContent: string = "";
+
+    /**
+     * Default constructor.
+     * @param fileUrl file Uri
+     * @param fileContent file content as string
+     */
+    constructor(fileUri:string) {
+        this.fileUri = fileUri;
+    }
 }
 
 /**
@@ -21,9 +62,10 @@ export interface InclusiveDiagnostic {
  */
 export async function scanFile(filePath: string): Promise<InclusiveDiagnostic[]> {
     // read entire file is faster than going through lines
-    let fileContent: string = readFileSync(filePath, 'utf8');
+    let fileInfo = new FileInfo(filePath);
+    fileInfo.fileContent = readFileSync(filePath, 'utf8');
 
-    return await scan(fileContent);
+    return await scan(fileInfo);
 }
 
 /**
@@ -34,7 +76,7 @@ export async function scanFile(filePath: string): Promise<InclusiveDiagnostic[]>
  * @param filePath path for the file
  * @returns a list of InclusiveDiagnostic results
  */
-export async function scan(fileContent: string): Promise<InclusiveDiagnostic[]> {
+export async function scan(fileInfo: FileInfo): Promise<InclusiveDiagnostic[]> {
     var diagnostics: InclusiveDiagnostic[] = [];
     const lineBreak:string = '\n'
 
@@ -47,7 +89,7 @@ export async function scan(fileContent: string): Promise<InclusiveDiagnostic[]> 
         const regex = new RegExp('\\b(' + term + ')\\b', "gi")
 
         // quickly search for the term and dismisses it if no occurrence is found
-        if (!regex.test(fileContent)) {
+        if (!regex.test(fileInfo.fileContent)) {
             continue;
         }
 
@@ -57,7 +99,7 @@ export async function scan(fileContent: string): Promise<InclusiveDiagnostic[]> 
 
         // look for term occurrences until there is nothing left (when offsetIndex is -1)
         do {
-            offsetIndex = fileContent.substring(termIndex >= 0 ? termIndex + 1 : 0).search(regex);
+            offsetIndex = fileInfo.fileContent.substring(termIndex >= 0 ? termIndex + 1 : 0).search(regex);
 
             // only do processing when a word is found
             if (offsetIndex > -1) {
@@ -66,11 +108,11 @@ export async function scan(fileContent: string): Promise<InclusiveDiagnostic[]> 
 
                 // calculates line indexes
                 // gets the absolute last line break character in the file just before the term
-                let lastLineBreakIndex: number = fileContent.substring(0, termIndex).lastIndexOf(lineBreak);
+                let lastLineBreakIndex: number = fileInfo.fileContent.substring(0, termIndex).lastIndexOf(lineBreak);
                 // gets the next line break after the term - now we know where the line starts and ends
-                let nextLineBreakIndex: number = fileContent.substring(termIndex).indexOf(lineBreak) + termIndex;
+                let nextLineBreakIndex: number = fileInfo.fileContent.substring(termIndex).indexOf(lineBreak) + termIndex;
                 // tabs are equivalent to 4 characters by default, so we must count them
-                let tabsInLine: number = (fileContent.substring(lastLineBreakIndex, nextLineBreakIndex).match(/\t/g) || []).length;
+                let tabsInLine: number = (fileInfo.fileContent.substring(lastLineBreakIndex, nextLineBreakIndex).match(/\t/g) || []).length;
                 /**
                  * calculating the start index of the term in the line:
                  * 1) termIndex - lastLineBreakIndex -> will give the relative position of the term to the line
@@ -81,7 +123,7 @@ export async function scan(fileContent: string): Promise<InclusiveDiagnostic[]> 
 
                 // create and send the diagnostic object
                 diagnostics.push({
-                    lineNumber: (fileContent.substring(0, termIndex).match(/\n|\n\r|\r/g) || []).length + 1,
+                    lineNumber: (fileInfo.fileContent.substring(0, termIndex).match(/\n|\n\r|\r/g) || []).length + 1,
                     term: term,
                     termStartIndex: termIndex,
                     termEndIndex: termIndex + term.length - 1,

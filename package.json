@@ -1,6 +1,6 @@
 {
   "name": "inclusivelint",
-  "version": "0.0.8",
+  "version": "0.0.11",
   "description": "Core library for inclusivelint",
   "main": "./dist/pkg-index.js",
   "bin": {
