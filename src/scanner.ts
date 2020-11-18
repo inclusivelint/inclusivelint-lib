@@ -58,7 +58,6 @@ class FileInfo {
  * @returns a list of InclusiveDiagnostic results
  */
 export async function scanFile(filePath: string): Promise<InclusiveDiagnostic[]> {
-    // read entire file is faster than going through lines
     let fileInfo = new FileInfo(filePath);
     fileInfo.fileContent = readFileSync(filePath, 'utf8');
 
