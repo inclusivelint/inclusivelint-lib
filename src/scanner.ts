@@ -38,7 +38,7 @@ export interface InclusiveDiagnostic {
 /**
  * File representation class. We are avoiding passing variables through functions to avoid unnecessary memory copies.
  */
-export class FileInfo {
+class FileInfo {
     public fileUri: string;
     public fileContent: string = "";
 
@@ -54,9 +54,6 @@ export class FileInfo {
 
 /**
  * Scan a file in search of non-inclusive terms
- * Complexity: O(N*M)
- * where: N = number of words
- *        M = number of non-inclusive terms to be scanned
  * @param filePath path for the file
  * @returns a list of InclusiveDiagnostic results
  */
@@ -69,26 +66,19 @@ export async function scanFile(filePath: string): Promise<InclusiveDiagnostic[]>
 }
 
 /**
- * Scan a file in search of non-inclusive terms
- * Complexity: O(N*M)
- * where: N = number of words
- *        M = number of non-inclusive terms to be scanned
- * @param filePath path for the file
+ * Internal method that scan a file in search of non-inclusive terms
+ * @param fileInfo object that contains the path to file to be scanned
  * @returns a list of InclusiveDiagnostic results
  */
 export async function scan(fileInfo: FileInfo): Promise<InclusiveDiagnostic[]> {
     var diagnostics: InclusiveDiagnostic[] = [];
     const lineBreak:string = '\n'
 
-    // reads the terms
     var terms: { [id: string]: string; } = await RetextParser.getTerms();
 
-    // iterate terms: less costly than iterating lines or words
     for (let term in terms) {
-        // build regex expression and initializes indexes
         const regex = new RegExp('\\b(' + term + ')\\b', "gi")
 
-        // quickly search for the term and dismisses it if no occurrence is found
         if (!regex.test(fileInfo.fileContent)) {
             continue;
         }
@@ -97,7 +87,6 @@ export async function scan(fileInfo: FileInfo): Promise<InclusiveDiagnostic[]> {
         let termIndex: number = -1;
         let offsetIndex: number = -1;
 
-        // look for term occurrences until there is nothing left (when offsetIndex is -1)
         do {
             offsetIndex = fileInfo.fileContent.substring(termIndex >= 0 ? termIndex + 1 : 0).search(regex);
 
@@ -121,7 +110,6 @@ export async function scan(fileInfo: FileInfo): Promise<InclusiveDiagnostic[]> {
                  */
                 let termLineStartIndex = termIndex - lastLineBreakIndex + (tabsInLine * 3);
 
-                // create and send the diagnostic object
                 diagnostics.push({
                     lineNumber: (fileInfo.fileContent.substring(0, termIndex).match(/\n|\n\r|\r/g) || []).length + 1,
                     term: term,
