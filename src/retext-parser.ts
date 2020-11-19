@@ -11,11 +11,8 @@ export class RetextParser {
    * @returns file content Promise
    */
   private static async downloadFile(url: string): Promise<string> {
-
-    // returning the promise
     return await new Promise((resolve, reject) => {
 
-      // trying to download the file
       https.get(
         url,
         function (response) {
@@ -25,11 +22,9 @@ export class RetextParser {
             reject(new Error(response.statusMessage))
           }
 
-          // building the return string by combining the chunks
           const chunks:any = [];
           response.on('data', (chunk) => chunks.push(chunk));
 
-          // returning the promise when the call finishes
           response.on('end', () => resolve(Buffer.concat(chunks).toString()));
 
         }
@@ -70,7 +65,6 @@ export class RetextParser {
       }
 
       (async function () {
-        // downloads the file
         let fileContent: string;
         try {
           fileContent = await RetextParser.downloadFile(config.DictionaryUrl); 
@@ -79,11 +73,9 @@ export class RetextParser {
           return;
         }
 
-        // parses lines and initializes dictionary
         var lines = fileContent.split('\n');
         var dictionary: { [id: string]: string; } = {};
 
-        //iterate through lines
         for (let i = 2; i < lines.length; i++) {
 
           // finds and sanitizes the key term and not-ok terms
@@ -104,7 +96,6 @@ export class RetextParser {
 
         }
 
-        // deliver the promise
         RetextParser.dictionary = dictionary;
         RetextParser.isDictionaryFilled = true;
         resolve(dictionary);
