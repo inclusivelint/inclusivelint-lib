@@ -1,19 +1,21 @@
-# inclusivelint-lib
+# inclusivelint
 
-This repository holds all the code for the inclusivelint TypeScript library, which is located [here](https://www.npmjs.com/package/@inclusivelint/inclusivelint).
+This repository holds all the code for the inclusivelint TypeScript library, which is located [here](https://www.npmjs.com/package/inclusivelint).
 
 Inclusivelint is a project that helps engineers to write code that is inclusive, making sure to tag all the words that are not inclusive and showing suggestions
 for it. For example, after scanning the files with this lib, you can see a output like this one:
 
 ``` json
-{ lineNumber: 1,
-  term: 'master',
-  termStartIndex: 9,
-  termEndIndex: 14,
-  termLineStartIndex: 10,
-  termLineEndIndex: 16,
-  suggestedTerms:
-   'primary, primaries, hub, hubs, reference, references, replica, replicas, spoke, spokes, secondary, secondaries'
+{ 
+    "lineNumber": 1,
+    "term": "master",
+    "termStartIndex": 9,
+    "termEndIndex": 14,
+    "termLineStartIndex": 10,
+    "termLineEndIndex": 16,
+    "suggestedTerms": [
+    "primary", "primaries", "hub", "hubs", "reference", "references", "replica", "replicas", "spoke", "spokes", "secondary", "secondaries"
+    ]
 }
 ```
 
@@ -24,7 +26,7 @@ This json shows that the word master was found in the index 9 and it ends on ind
 Using the library is really straight forward and can be done like this:
 
 ``` typescript
-import { InclusiveDiagnostic, scanFile } from "@inclusivelint/inclusivelint";
+import { InclusiveDiagnostic, scanFile } from "inclusivelint";
 
 
 async function main() {
