@@ -2,12 +2,22 @@
 
 import chalk from 'chalk';
 import figlet from 'figlet';
-import clear from 'clear';
 import * as path from 'path';
 import { InclusiveDiagnostic, scanFile } from './scanner'
 const { Command } = require('commander');
 
-clear();
+function prettyPrintResults(diagnostics: InclusiveDiagnostic[]) {
+  for (let diagnostic of diagnostics) {
+    console.log(
+      chalk.yellow(createMessage(diagnostic))
+    );
+  }
+}
+
+function createMessage(diagnostic: InclusiveDiagnostic): String {
+  return `[Warning] Line ${ diagnostic.lineNumber } : The term ${ diagnostic.term } was found. Consider using ${ diagnostic.suggestedTerms }`;
+}
+
 console.log(
   chalk.green(
     figlet.textSync('inclusivelint', { horizontalLayout: 'full' })
@@ -26,12 +36,12 @@ if (program.scan) {
     const runDiagnostics = async () => {
         var filePath: string = path.join(process.cwd(), program.scan);
         var diagnostics: InclusiveDiagnostic[] = await scanFile(filePath)
-        console.log(JSON.stringify(diagnostics));
+        prettyPrintResults(diagnostics);
     };
 
     runDiagnostics();
 }
 
 if (!process.argv.slice(2).length) {
-	program.outputHelp();
+  program.outputHelp();
 }
