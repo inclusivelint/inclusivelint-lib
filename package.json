@@ -1,6 +1,6 @@
 {
   "name": "inclusivelint",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Core library for inclusivelint",
   "main": "./dist/pkg-index.js",
   "bin": {
@@ -40,6 +40,7 @@
     "commander": "^6.2.0",
     "figlet": "^1.5.0",
     "fs": "0.0.1-security",
+    "glob": "^7.1.6",
     "http": "^0.0.1-security",
     "nodejs": "^0.0.0",
     "ora": "^5.1.0",
