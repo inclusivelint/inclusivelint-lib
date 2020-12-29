@@ -23,6 +23,14 @@ This json shows that the word master was found in the index 9 and it ends on ind
 
 ## How to use
 
+### Using as a TypeScript Library
+
+After running the installation command:
+
+``` sh
+npm install inclusivelint
+```
+
 Using the library is really straight forward and can be done like this:
 
 ``` typescript
@@ -99,4 +107,32 @@ interface InclusiveDiagnostic {
      */
     suggestedTerms: string;
 }
+```
+
+### Using as a command line tool
+
+Once you run the command to install the library, you will also be able to use the command line.
+Use the same command to install the library:
+
+``` sh
+npm install inclusivelint
+```
+
+There are two parameters you can use to run the command line:
+
+``` txt
+-p, --path <path>  Path to be scaned. If its a folder, use the -r ou --resursive option
+-r, --recursive    If the --path option is a folder, use this option to run recursively. Not needed if its path is a file
+```
+
+In other words, to run the command recursively, do this:
+
+``` sh
+inclusivelint -r -p path_to_be_scanned
+```
+
+To run in a single file, do:
+
+``` sh
+inclusivelint -p path_to_the_file_to_be_scanned
 ```
