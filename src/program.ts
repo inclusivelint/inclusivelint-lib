@@ -143,7 +143,7 @@ export class Program {
         program
             .version('1.0.0')
             .description("inclusivelint CLI for scanning non-inclusive terms")
-            .option('-p, --path <path>', 'Path to be scaned. If its a folder, use the -r ou --resursive option')
+            .option('-p, --path <path>', 'Path to be scanned. If its a folder, use the -r ou --resursive option')
             .option('-r, --recursive', 'If the --path option is a folder, use this option to run recursively. Not needed if its path is a file')
             .option('-i, --ignore <ignore>', 'List of file patterns to be ignored, colon separated. Example: inclusivelint -p . -r -i /node_modules/**,/.git/** is provided, it will search for all files inside ./, exept node_modules and .git folders.')
             .parse(args);
