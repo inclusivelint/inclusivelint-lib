@@ -1,5 +1,4 @@
 import * as https from "https"
-import * as config from './config.json';
 
 export class RetextParser {
   private static dictionary: { [id: string]: string; } = {};
@@ -53,7 +52,7 @@ export class RetextParser {
    * Fetches and parses non-inclusive terms.
    * @returns dictionary containing the term and not-ok terms related to it
    */
-  public static async getTerms(): Promise<{ [id: string]: string; }> {
+  public static async getTerms(dictionaryUrl: string): Promise<{ [id: string]: string; }> {
 
     // returning a promise
     return await new Promise((resolve, reject) => {
@@ -67,7 +66,7 @@ export class RetextParser {
       (async function () {
         let fileContent: string;
         try {
-          fileContent = await RetextParser.downloadFile(config.DictionaryUrl); 
+          fileContent = await RetextParser.downloadFile(dictionaryUrl); 
         } catch(e) {
           reject('Error fetching terms file: ' + e)
           return;

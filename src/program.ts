@@ -23,6 +23,12 @@ export class Program {
     //#endregion
     //#region Accessors
     /**
+     * Gets the dictionaryUrl argument value.
+     */
+    private GetDictionaryUrlArgument(): any {
+        return this.commandArguments.dictionaryUrl;
+    }
+    /**
      * Gets the path argument value;
      */
     private GetPathArgument(): any {
@@ -48,10 +54,11 @@ export class Program {
     public async RunAsync() {
         // get files and run diagnostics for each one of them
         var listOfFiles = this.GetFilesList();
+        var dictionaryUrl = this.GetDictionaryUrlArgument()
 
         for (let uniquePath of listOfFiles) {
             if (fs.lstatSync(uniquePath).isFile()) {
-                var diagnostics: InclusiveDiagnostic[] = await scanFile(uniquePath);
+                var diagnostics: InclusiveDiagnostic[] = await scanFile(dictionaryUrl, uniquePath);
                 this.PrintDiagnostics(uniquePath, diagnostics);
             }
         }
@@ -143,6 +150,7 @@ export class Program {
         program
             .version('1.0.0')
             .description("inclusivelint CLI for scanning non-inclusive terms")
+            .option('-d, --dictionary-url <url>', 'URL to the dictionary. See wordsTable.md for the format', 'https://raw.githubusercontent.com/inclusivelint/inclusivelint/main/parsers/wordsTable.md')
             .option('-p, --path <path>', 'Path to be scanned. If its a folder, use the -r ou --resursive option')
             .option('-r, --recursive', 'If the --path option is a folder, use this option to run recursively. Not needed if its path is a file')
             .option('-i, --ignore <ignore>', 'List of file patterns to be ignored, colon separated. Example: inclusivelint -p . -r -i /node_modules/**,/.git/** is provided, it will search for all files inside ./, exept node_modules and .git folders.')

@@ -54,25 +54,27 @@ export interface InclusiveDiagnostic {
 
 /**
  * Scan a file in search of non-inclusive terms
+ * @param dictionaryUrl url for the dictionary
  * @param filePath path for the file
  * @returns a list of InclusiveDiagnostic results
  */
-export async function scanFile(filePath: string): Promise<InclusiveDiagnostic[]> {
+export async function scanFile(dictionaryUrl: string, filePath: string): Promise<InclusiveDiagnostic[]> {
     var fileContent = readFileSync(filePath, 'utf8');
 
-    return await scan(fileContent);
+    return await scan(dictionaryUrl, fileContent);
 }
 
 /**
  * Method that scan string content in search of non-inclusive terms
+ * @param dictionaryUrl url for the dictionary
  * @param fileContent string containing all the text to be analyzed
  * @returns a list of InclusiveDiagnostic results
  */
-export async function scan(fileContent: string): Promise<InclusiveDiagnostic[]> {
+export async function scan(dictionaryUrl: string, fileContent: string): Promise<InclusiveDiagnostic[]> {
     var diagnostics: InclusiveDiagnostic[] = [];
     const lineBreak:string = '\n'
 
-    var terms: { [id: string]: string; } = await RetextParser.getTerms();
+    var terms: { [id: string]: string; } = await RetextParser.getTerms(dictionaryUrl);
 
     for (let term in terms) {
         const regex = new RegExp('\\b(' + term + ')\\b', "gi")
