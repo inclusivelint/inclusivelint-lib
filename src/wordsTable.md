@@ -293,6 +293,7 @@
 | `housewives` | [basic](#basic) | `housewives` | `homemakers`, `homeworkers` |
 | `motherly` | [basic](#basic) | `motherly` | `loving`, `warm`, `nurturing` |
 | `manpower` | [basic](#basic) | `manpower` | `human resources`, `workforce`, `personnel`, `staff`, `labor`, `labor force`, `staffing`, `combat personnel` |
+| `master` | [basic](#basic) | `master` | `primary`, `main`, `default` |
 | `master of ceremonies` | [basic](#basic) | `master of ceremonies` | `emcee`, `moderator`, `convenor` |
 | `masterful` | [basic](#basic) | `masterful` | `skilled`, `authoritative`, `commanding` |
 | `mastermind` | [basic](#basic) | `mastermind` | `genius`, `creator`, `instigator`, `oversee`, `launch`, `originate` |
