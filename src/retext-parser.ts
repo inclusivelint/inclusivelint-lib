@@ -40,7 +40,7 @@ export class RetextParser {
     private static sanitizeValue(value: string, removeParenthesis: boolean): string {
         let result: string = value.replace(/[`]/g, "");
         if (removeParenthesis) {
-            result = result.replace(/\([^\)]+\)/g, '');
+            result = result.replace(/\([^)]+\)/g, '');
         }
 
         return result.trim();
