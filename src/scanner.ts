@@ -48,7 +48,7 @@ export class Scanner {
      * @returns a list of InclusiveDiagnostic results
      */
     public async scanFile(filePath: string): Promise<InclusiveDiagnostic[]> {
-        var fileContent = readFileSync(filePath, 'utf8');
+        const fileContent = readFileSync(filePath, 'utf8');
 
         return await this.scan(fileContent);
     }
@@ -59,10 +59,10 @@ export class Scanner {
      * @returns a list of InclusiveDiagnostic results
      */
     private async scan(fileContent: string): Promise<InclusiveDiagnostic[]> {
-        var diagnostics: InclusiveDiagnostic[] = [];
+        const diagnostics: InclusiveDiagnostic[] = [];
         const lineBreak: string = '\n'
 
-        var terms: { [id: string]: string; } = await RetextParser.getTerms(this.dictionaryUrl);
+        const terms: { [id: string]: string; } = await RetextParser.getTerms(this.dictionaryUrl);
 
         for (let term in terms) {
             const regex = new RegExp('\\b(' + term + ')\\b', "gi")

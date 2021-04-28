@@ -70,14 +70,14 @@ export class RetextParser {
                     return;
                 }
 
-                var lines = fileContent.split('\n');
-                var dictionary: { [id: string]: string; } = {};
+                const lines = fileContent.split('\n');
+                const dictionary: { [id: string]: string; } = {};
 
                 for (let i = 2; i < lines.length; i++) {
 
                     // finds and sanitizes the key term and not-ok terms
-                    var values = lines[i].split('|');
-                    var key: string = RetextParser.sanitizeValue(values[3], true).toLowerCase();
+                    const values = lines[i].split('|');
+                    const key: string = RetextParser.sanitizeValue(values[3], true).toLowerCase();
                     let value: string = RetextParser.sanitizeValue(values[4], false);
 
                     // a term may have more than one definition
@@ -85,7 +85,7 @@ export class RetextParser {
                     if (key.indexOf(',') == -1) {
                         dictionary[key] = value;
                     } else {
-                        var keys = key.split(',');
+                        const keys = key.split(',');
                         keys.forEach(subKey => {
                             dictionary[subKey.trim()] = value;
                         })
