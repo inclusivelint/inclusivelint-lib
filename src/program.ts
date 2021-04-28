@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import * as fs from 'fs';
-import { InclusiveDiagnostic, scanFile } from './scanner'
+import { InclusiveDiagnostic, Scanner } from './scanner'
 
 const { Command } = require('commander');
 const { glob } = require('glob');
@@ -60,11 +60,11 @@ export class Program {
     public async RunAsync() {
         // get files and run diagnostics for each one of them
         var listOfFiles = this.GetFilesList();
-        var dictionaryUrl = this.GetDictionaryUrlArgument()
+        const scanner: Scanner = new Scanner(this.GetDictionaryUrlArgument())
 
         for (let uniquePath of listOfFiles) {
             if (fs.lstatSync(uniquePath).isFile()) {
-                var diagnostics: InclusiveDiagnostic[] = await scanFile(dictionaryUrl, uniquePath);
+                var diagnostics: InclusiveDiagnostic[] = await scanner.scanFile(uniquePath);
                 this.PrintDiagnostics(uniquePath, diagnostics);
             }
         }

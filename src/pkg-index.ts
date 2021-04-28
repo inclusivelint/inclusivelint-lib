@@ -1,1 +1,1 @@
-export { InclusiveDiagnostic, scanFile, scan } from './scanner'
+export { InclusiveDiagnostic, Scanner } from './scanner'
