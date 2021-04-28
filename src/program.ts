@@ -82,7 +82,7 @@ export class Program {
     /**
      * Prints diagnostic messages.
      * @param filePath file path analyzed.
-     * @param diagnostic diagnostic data
+     * @param diagnostics diagnostic data
      */
     private PrintDiagnostics(filePath: String, diagnostics: InclusiveDiagnostic[]) {
         for (let diagnostic of diagnostics) {
@@ -104,7 +104,6 @@ export class Program {
 
     /**
      * Gets the list of ignored paths provided on the command line arguments.
-     * @param program object used for parsing command line arguments.
      * @returns list of ignored paths.
      */
     private GetIgnoredPaths(): String[] {
