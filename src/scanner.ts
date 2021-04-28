@@ -36,23 +36,6 @@ export interface InclusiveDiagnostic {
 }
 
 /**
- * File representation class. We are avoiding passing variables through functions to avoid unnecessary memory copies.
- */
-// class FileInfo {
-//     public fileUri: string;
-//     public fileContent: string = "";
-
-//     /**
-//      * Default constructor.
-//      * @param fileUrl file Uri
-//      * @param fileContent file content as string
-//      */
-//     constructor(fileUri:string) {
-//         this.fileUri = fileUri;
-//     }
-// }
-
-/**
  * Scan a file in search of non-inclusive terms
  * @param dictionaryUrl url for the dictionary
  * @param filePath path for the file
@@ -72,7 +55,7 @@ export async function scanFile(dictionaryUrl: string, filePath: string): Promise
  */
 export async function scan(dictionaryUrl: string, fileContent: string): Promise<InclusiveDiagnostic[]> {
     var diagnostics: InclusiveDiagnostic[] = [];
-    const lineBreak:string = '\n'
+    const lineBreak: string = '\n'
 
     var terms: { [id: string]: string; } = await RetextParser.getTerms(dictionaryUrl);
 

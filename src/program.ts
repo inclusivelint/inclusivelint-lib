@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import * as fs from 'fs';
 import { InclusiveDiagnostic, scanFile } from './scanner'
+
 const { Command } = require('commander');
 const { glob } = require('glob');
 
@@ -20,6 +21,7 @@ export class Program {
         this.commandArguments = this.SetupCommandArgs(args);
         this.PrintWelcomeSign();
     }
+
     //#endregion
     //#region Accessors
     /**
@@ -28,24 +30,28 @@ export class Program {
     private GetDictionaryUrlArgument(): any {
         return this.commandArguments.dictionaryUrl;
     }
+
     /**
      * Gets the path argument value;
      */
     private GetPathArgument(): any {
         return this.commandArguments.path;
     }
+
     /**
      * Gets the ignore argument value;
      */
     private GetIgnoreArgument(): any {
         return this.commandArguments.ignore;
     }
+
     /**
      * Gets the recursive argument value;
      */
     private GetRecursiveArgument(): any {
         return this.commandArguments.recursive;
     }
+
     //#endregion
     //#region Public
     /**
@@ -63,12 +69,14 @@ export class Program {
             }
         }
     }
+
     /**
      * Program entrypoint
      */
     public Run() {
         (async () => await this.RunAsync())();
     }
+
     //#endregion
     //#region Private
     /**
@@ -97,7 +105,7 @@ export class Program {
     /**
      * Gets the list of ignored paths provided on the command line arguments.
      * @param program object used for parsing command line arguments.
-     * @returns list of ignored paths. 
+     * @returns list of ignored paths.
      */
     private GetIgnoredPaths(): String[] {
         let ret: string[] = [];
@@ -115,7 +123,7 @@ export class Program {
     /**
      * Gets the list of files, according to the command line arguments.
      * @param program object used for parsing command line arguments.
-     * @returns list of files. 
+     * @returns list of files.
      */
     private GetFilesList(): any {
         // if recursive option is flagged, then we must also consider the ignored paths
@@ -123,8 +131,7 @@ export class Program {
             return glob.sync(this.GetPathArgument() + '/**/*', {
                 ignore: this.GetIgnoredPaths(),
             });
-        }
-        else {
+        } else {
             return glob.sync(this.GetPathArgument())
         }
     }
@@ -158,5 +165,6 @@ export class Program {
 
         return program;
     }
+
     //#endregion
 }
