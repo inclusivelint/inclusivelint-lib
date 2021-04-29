@@ -35,91 +35,84 @@ export interface InclusiveDiagnostic {
     suggestedTerms: string;
 }
 
-/**
- * File representation class. We are avoiding passing variables through functions to avoid unnecessary memory copies.
- */
-// class FileInfo {
-//     public fileUri: string;
-//     public fileContent: string = "";
+export class Scanner {
+    private readonly dictionaryUrl: string
 
-//     /**
-//      * Default constructor.
-//      * @param fileUrl file Uri
-//      * @param fileContent file content as string
-//      */
-//     constructor(fileUri:string) {
-//         this.fileUri = fileUri;
-//     }
-// }
-
-/**
- * Scan a file in search of non-inclusive terms
- * @param filePath path for the file
- * @returns a list of InclusiveDiagnostic results
- */
-export async function scanFile(filePath: string): Promise<InclusiveDiagnostic[]> {
-    var fileContent = readFileSync(filePath, 'utf8');
-
-    return await scan(fileContent);
-}
-
-/**
- * Method that scan string content in search of non-inclusive terms
- * @param fileContent string containing all the text to be analyzed
- * @returns a list of InclusiveDiagnostic results
- */
-export async function scan(fileContent: string): Promise<InclusiveDiagnostic[]> {
-    var diagnostics: InclusiveDiagnostic[] = [];
-    const lineBreak:string = '\n'
-
-    var terms: { [id: string]: string; } = await RetextParser.getTerms();
-
-    for (let term in terms) {
-        const regex = new RegExp('\\b(' + term + ')\\b', "gi")
-
-        if (!regex.test(fileContent)) {
-            continue;
-        }
-
-        // termIndex is the overall term index on the file, offsetIndex is the relative index after the last word occurrence
-        let termIndex: number = -1;
-        let offsetIndex: number = -1;
-
-        do {
-            offsetIndex = fileContent.substring(termIndex >= 0 ? termIndex + 1 : 0).search(regex);
-
-            // only do processing when a word is found
-            if (offsetIndex > -1) {
-                // keep the term index updated with the overall index
-                termIndex += offsetIndex + 1;
-
-                // calculates line indexes
-                // gets the absolute last line break character in the file just before the term
-                let lastLineBreakIndex: number = fileContent.substring(0, termIndex).lastIndexOf(lineBreak);
-                // gets the next line break after the term - now we know where the line starts and ends
-                let nextLineBreakIndex: number = fileContent.substring(termIndex).indexOf(lineBreak) + termIndex;
-                // tabs are equivalent to 4 characters by default, so we must count them
-                let tabsInLine: number = (fileContent.substring(lastLineBreakIndex, nextLineBreakIndex).match(/\t/g) || []).length;
-                /**
-                 * calculating the start index of the term in the line:
-                 * 1) termIndex - lastLineBreakIndex -> will give the relative position of the term to the line
-                 * 2) tabsInLine * 3 -> each tab is counted as one character in 1). As we want 1 tab to be equivalent to 4 characters
-                 *    we must add 3 to each tab to the overall count
-                 */
-                let termLineStartIndex = termIndex - lastLineBreakIndex + (tabsInLine * 3);
-
-                diagnostics.push({
-                    lineNumber: (fileContent.substring(0, termIndex).match(/\n|\n\r|\r/g) || []).length + 1,
-                    term: term,
-                    termStartIndex: termIndex,
-                    termEndIndex: termIndex + term.length - 1,
-                    termLineStartIndex: termLineStartIndex,
-                    termLineEndIndex: termLineStartIndex + term.length,
-                    suggestedTerms: terms[term]
-                });
-            }
-        } while (offsetIndex > -1);
+    constructor(dictionaryUrl: string) {
+        this.dictionaryUrl = dictionaryUrl;
     }
 
-    return diagnostics;
+    /**
+     * Scan a file in search of non-inclusive terms
+     * @param filePath path for the file
+     * @returns a list of InclusiveDiagnostic results
+     */
+    public async scanFile(filePath: string): Promise<InclusiveDiagnostic[]> {
+        const fileContent = readFileSync(filePath, 'utf8');
+
+        return await this.scan(fileContent);
+    }
+
+    /**
+     * Method that scan string content in search of non-inclusive terms
+     * @param fileContent string containing all the text to be analyzed
+     * @returns a list of InclusiveDiagnostic results
+     */
+    private async scan(fileContent: string): Promise<InclusiveDiagnostic[]> {
+        const diagnostics: InclusiveDiagnostic[] = [];
+        const lineBreak: string = '\n'
+
+        const terms: { [id: string]: string; } = await RetextParser.getTerms(this.dictionaryUrl);
+
+        for (let term in terms) {
+            const regex = new RegExp('\\b(' + term + ')\\b', "gi")
+
+            if (!regex.test(fileContent)) {
+                continue;
+            }
+
+            // termIndex is the overall term index on the file,
+            // offsetIndex is the relative index after the last word occurrence
+            let termIndex: number = -1;
+            let offsetIndex: number = -1;
+
+            do {
+                offsetIndex = fileContent.substring(termIndex >= 0 ? termIndex + 1 : 0).search(regex);
+
+                // only do processing when a word is found
+                if (offsetIndex > -1) {
+                    // keep the term index updated with the overall index
+                    termIndex += offsetIndex + 1;
+
+                    // calculates line indexes
+                    // gets the absolute last line break character in the file just before the term
+                    let lastLineBreakIndex: number =
+                        fileContent.substring(0, termIndex).lastIndexOf(lineBreak);
+                    // gets the next line break after the term - now we know where the line starts and ends
+                    let nextLineBreakIndex: number =fileContent.substring(termIndex).indexOf(lineBreak) + termIndex;
+                    // tabs are equivalent to 4 characters by default, so we must count them
+                    let tabsInLine: number = (fileContent.substring(lastLineBreakIndex, nextLineBreakIndex).match(/\t/g) || []).length;
+                    /**
+                     * calculating the start index of the term in the line:
+                     * 1) termIndex - lastLineBreakIndex -> will give the relative position of the term to the line
+                     * 2) tabsInLine * 3 -> each tab is counted as one character in 1). As we want 1 tab to be equivalent to 4 characters
+                     *    we must add 3 to each tab to the overall count
+                     */
+                    let termLineStartIndex = termIndex - lastLineBreakIndex + (tabsInLine * 3);
+
+                    diagnostics.push({
+                        lineNumber: (fileContent.substring(0, termIndex).match(/\n|\n\r|\r/g) || []).length + 1,
+                        term: term,
+                        termStartIndex: termIndex,
+                        termEndIndex: termIndex + term.length - 1,
+                        termLineStartIndex: termLineStartIndex,
+                        termLineEndIndex: termLineStartIndex + term.length,
+                        suggestedTerms: terms[term]
+                    });
+                }
+            } while (offsetIndex > -1);
+        }
+
+        return diagnostics;
+    }
 }
